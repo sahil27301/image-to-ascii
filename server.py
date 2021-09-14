@@ -122,7 +122,7 @@ class ImageConverter:
 
 def main():
     image_converter = ImageConverter()
-    print(image_converter.get_ascii_art("sample_image.jpg", 300))
+    print(image_converter.get_ascii_art("sample_image.jpg"))
 
 
 if __name__ == "__main__":
