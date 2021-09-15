@@ -1,5 +1,31 @@
-from PIL import Image
 import numpy as np
+from PIL import Image
+from pyngrok import ngrok
+from xmlrpc.server import SimpleXMLRPCServer
+from xmlrpc.server import SimpleXMLRPCRequestHandler
+
+# Restrict to a particular path.
+
+http_tunnel = ngrok.connect()
+
+
+class RequestHandler(SimpleXMLRPCRequestHandler):
+    rpc_paths = ('/imageUpload',)
+
+
+# Create server
+with SimpleXMLRPCServer((http_tunnel.public_url),
+                        requestHandler=RequestHandler) as server:
+    server.register_introspection_functions()
+
+    def imageToAscii(str):
+        return str
+    server.register_function(imageToAscii, 'imageToAscii')
+
+    # Run the server's main loop
+    server.serve_forever()
+
+print("NGROK SERVER:", http_tunnel.public_url)
 
 
 class ImageConverter:
