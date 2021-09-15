@@ -1,4 +1,3 @@
-import base64
 import numpy as np
 from PIL import Image
 from pyngrok import ngrok
@@ -57,9 +56,9 @@ class ImageConverter:
 
         lightweight: bool
 
-            If set to True, limits the ascii characters to 10 symbols.
+            If set to True, limits the ASCII characters to 10 symbols.
 
-            If set to False, uses 70 ascii characters.
+            If set to False, uses 70 ASCII characters.
 
         Returns
         -------
@@ -73,7 +72,7 @@ class ImageConverter:
         gscale_light = "@%#*+=-:. "
 
         # Convert the image to grayscale
-        image = Image.open(io.BytesIO(base64.b64decode((image_data.data)))).convert('L')
+        image = Image.open(io.BytesIO((image_data.data))).convert('L')
 
         total_width, total_height = image.size[0], image.size[1]
 
