@@ -10,6 +10,10 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
+        "link",
+        help="The link of the server"
+    )
+    parser.add_argument(
         "-c",
         "--columns",
         help="Specify the number of columns in the generated ASCII art image.",
@@ -62,7 +66,7 @@ def main():
     image_bytes = image_file.getvalue()
 
     # Connect to server
-    with ServerProxy('http://d0ee-49-36-113-220.ngrok.io') as proxy:
+    with ServerProxy(args.link) as proxy:
         result = proxy.get_ascii_art(image_bytes, args.columns, args.scale, args.lightweight)
         if args.quiet:
             with open("image.txt", "w+") as file:
