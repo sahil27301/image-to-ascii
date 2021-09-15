@@ -73,7 +73,6 @@ class ImageConverter:
         gscale_light = "@%#*+=-:. "
 
         # Convert the image to grayscale
-        # print(base64.b64decode((image_data.data)))
         image = Image.open(io.BytesIO(base64.b64decode((image_data.data)))).convert('L')
 
         total_width, total_height = image.size[0], image.size[1]
@@ -123,8 +122,6 @@ class ImageConverter:
 
 
 def main():
-    # image_converter = ImageConverter()
-    # print(image_converter.get_ascii_art("sample_image.jpg"))
 
     http_tunnel = ngrok.connect()
 
@@ -132,7 +129,7 @@ def main():
 
     try:
         # Create server
-        with SimpleXMLRPCServer(('localhost', 3000)) as server:
+        with SimpleXMLRPCServer(('localhost', 80)) as server:
 
             server.register_instance(ImageConverter())
 

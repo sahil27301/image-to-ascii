@@ -17,7 +17,7 @@ def main():
     image_obj.save(im_file, format="JPEG")
     im_bytes = im_file.getvalue()  # im_bytes: image in binary format.
     im_b64 = base64.b64encode(im_bytes)
-    with ServerProxy('http://localhost:3000') as proxy:
+    with ServerProxy('http://37b4-49-36-113-220.ngrok.io') as proxy:
         result = proxy.get_ascii_art(im_b64, 100, 0.43, False)
         print(result)
 
