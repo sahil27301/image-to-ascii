@@ -132,7 +132,7 @@ def main():
 
     try:
         # Create server
-        with SimpleXMLRPCServer(('localhost', 3000)) as server:
+        with SimpleXMLRPCServer(('localhost', 80)) as server:
 
             server.register_instance(ImageConverter())
 
