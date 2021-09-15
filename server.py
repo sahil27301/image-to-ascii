@@ -1,31 +1,10 @@
+import base64
 import numpy as np
 from PIL import Image
 from pyngrok import ngrok
 from xmlrpc.server import SimpleXMLRPCServer
-from xmlrpc.server import SimpleXMLRPCRequestHandler
-
-# Restrict to a particular path.
-
-http_tunnel = ngrok.connect()
-
-
-class RequestHandler(SimpleXMLRPCRequestHandler):
-    rpc_paths = ('/imageUpload',)
-
-
-# Create server
-with SimpleXMLRPCServer((http_tunnel.public_url),
-                        requestHandler=RequestHandler) as server:
-    server.register_introspection_functions()
-
-    def imageToAscii(str):
-        return str
-    server.register_function(imageToAscii, 'imageToAscii')
-
-    # Run the server's main loop
-    server.serve_forever()
-
-print("NGROK SERVER:", http_tunnel.public_url)
+import xmlrpc.client
+import io
 
 
 class ImageConverter:
@@ -57,34 +36,30 @@ class ImageConverter:
         return np.average(image_array.reshape(width*height))
 
     @staticmethod
-    def get_ascii_art(image_path: str, columns: int = 80, scale: float = 0.43, lightweight: bool = False) -> str:
+    def get_ascii_art(image_data: xmlrpc.client.Binary, columns: int, scale: float, lightweight: bool) -> str:
         """
         Parameters
         ----------
 
-        image_path: str
+        image_path: xmlrpc.client.Binary
 
-            Contains the image file location.
+            Contains the bytes of the image.
 
         columns: int
 
             Specifies the width of each row in ASCII image.
 
-            Default is 80.
-
         scale: float
 
             Specifies the scale of the image, and expects a value in the range (0, 1]
 
-            Default is 0.43, which suits the Courier Font.
+            0.43 suits the Courier Font.
 
         lightweight: bool
 
             If set to True, limits the ascii characters to 10 symbols.
 
             If set to False, uses 70 ascii characters.
-
-            Default value is False.
 
         Returns
         -------
@@ -98,7 +73,8 @@ class ImageConverter:
         gscale_light = "@%#*+=-:. "
 
         # Convert the image to grayscale
-        image = Image.open(image_path).convert('L')
+        # print(base64.b64decode((image_data.data)))
+        image = Image.open(io.BytesIO(base64.b64decode((image_data.data)))).convert('L')
 
         total_width, total_height = image.size[0], image.size[1]
 
@@ -147,8 +123,23 @@ class ImageConverter:
 
 
 def main():
-    image_converter = ImageConverter()
-    print(image_converter.get_ascii_art("sample_image.jpg"))
+    # image_converter = ImageConverter()
+    # print(image_converter.get_ascii_art("sample_image.jpg"))
+
+    http_tunnel = ngrok.connect()
+
+    print("NGROK SERVER:", http_tunnel.public_url)
+
+    try:
+        # Create server
+        with SimpleXMLRPCServer(('localhost', 3000)) as server:
+
+            server.register_instance(ImageConverter())
+
+            # Run the server's main loop
+            server.serve_forever()
+    except KeyboardInterrupt:
+        print("Exitting")
 
 
 if __name__ == "__main__":
