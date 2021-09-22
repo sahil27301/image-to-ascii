@@ -72,7 +72,8 @@ class ImageConverter:
         gscale_light = "@%#*+=-:. "
 
         # Convert the image to grayscale
-        image = Image.open(io.BytesIO(base64.b64decode(image_data['data']))).convert('L')
+        image = Image.open(io.BytesIO(
+            base64.b64decode(image_data['data']))).convert('L')
 
         total_width, total_height = image.size[0], image.size[1]
 
@@ -108,10 +109,12 @@ class ImageConverter:
                 # Exctract tile by cropping image
                 img = image.crop((x1, y1, x2, y2))
 
-                average_luminance = ImageConverter.get_average_grayscale_value(img)
+                average_luminance = ImageConverter.get_average_grayscale_value(
+                    img)
 
                 if lightweight:
-                    grayscale_value = gscale_light[round(average_luminance*9/255)]
+                    grayscale_value = gscale_light[round(
+                        average_luminance*9/255)]
                 else:
                     grayscale_value = gscale[round(average_luminance*69/255)]
 
@@ -124,11 +127,14 @@ def main():
 
     daemon = Pyro4.Daemon()                         # make a Pyro daemon
     ns = Pyro4.locateNS()                           # find the name server
-    uri = daemon.register(ImageConverter)           # register the greeting maker as a Pyro object
-    ns.register("example.image.converter", uri)     # register the object with a name in the name server
+    # register the greeting maker as a Pyro object
+    uri = daemon.register(ImageConverter)
+    # register the object with a name in the name server
+    ns.register("example.image.converter", uri)
 
-    print("Hi. Kerberos is now active.")
-    daemon.requestLoop()                            # start the event loop of the server to wait for calls
+    print("Server is now running.")
+    # start the event loop of the server to wait for calls
+    daemon.requestLoop()
 
 
 if __name__ == "__main__":
